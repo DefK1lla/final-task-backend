@@ -21,8 +21,8 @@ mongoose.connect(`${process.env.MONGODB_URI}`, () =>
 );
 
 const app = express();
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
-app.use(cors());
 app.use(
   session({
     secret: 'secretcode',
@@ -103,6 +103,13 @@ app.post('/register', async (req, res) => {
 app.post('/login', passport.authenticate('local'), (req, res) => {
   const user = req.user as IDBUser;
   res.status(200).json({ id: user._id, username: user.username });
+});
+
+app.get('/logout', (req, res) => {
+  req.logOut(() => {
+    res.clearCookie('connect.sid');
+    res.status(200).json({ message: 'success' });
+  });
 });
 
 app.listen(process.env.PORT, () => {
