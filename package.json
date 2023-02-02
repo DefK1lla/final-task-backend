@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/DefK1lla/final-task-backend#readme",
   "dependencies": {
+    "@types/passport-google-oauth20": "^2.0.11",
     "bcryptjs": "^2.4.3",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
@@ -41,7 +42,6 @@
     "@types/express-session": "^1.17.5",
     "@types/mongoose": "^5.11.97",
     "@types/passport": "^1.0.11",
-    "@types/passport-github": "^1.1.7",
     "@types/passport-local": "^1.0.35",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",

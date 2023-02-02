@@ -8,6 +8,7 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import MongoStore from 'connect-mongo';
+import { Strategy } from 'passport-google-oauth20';
 import { IDBUser, IUser } from './typings/User';
 import User from './models/User';
 
@@ -35,6 +36,52 @@ app.use(
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.use(
+  new Strategy(
+    {
+      clientID: `${process.env.GOOGLE_CLIENT_ID}`,
+      clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
+      callbackURL: '/auth/google/callback',
+    },
+    function (_: any, __: any, profile: any, cb: any) {
+      User.findOne(
+        { googleId: profile.id },
+        async (err: Error, doc: IDBUser) => {
+          if (err) {
+            return cb(err, null);
+          }
+
+          if (!doc) {
+            const newUser = new User({
+              googleId: profile.id,
+              username: profile.displayName,
+            });
+
+            await newUser.save();
+            cb(null, newUser);
+          }
+          cb(null, doc);
+        }
+      );
+    }
+  )
+);
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+
+app.get(
+  '/auth/google/callback',
+  passport.authenticate('google', {
+    session: true,
+  }),
+  (req, res) => {
+    res.redirect('http://localhost:3000');
+  }
+);
 
 passport.use(
   new LocalStrategy((username: string, password: string, done) => {
@@ -108,6 +155,7 @@ app.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
+  console.log(req.user);
   req.logOut(() => {
     res.clearCookie('connect.sid');
     res.status(200).json({ message: 'success' });

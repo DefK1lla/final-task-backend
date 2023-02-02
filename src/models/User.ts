@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
     required: false,
     type: String,
   },
+  googleId: {
+    required: false,
+    type: String,
+  },
 });
 
 export default mongoose.model('User', userSchema);
