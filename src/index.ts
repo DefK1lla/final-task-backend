@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
+import MongoStore from 'connect-mongo';
 import { IDBUser, IUser } from './typings/User';
 import User from './models/User';
 
@@ -28,6 +29,7 @@ app.use(
     secret: 'secretcode',
     resave: true,
     saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   })
 );
 app.use(cookieParser());
