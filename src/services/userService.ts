@@ -8,24 +8,28 @@ class UserService {
     await newUser.save();
     return {
       username: newUser.username as string,
-      _id: String(newUser._id),
+      _id: newUser._id,
     };
   };
 
-  getOneById = async (id: string): Promise<IUser> => {
-    const user = (await User.findById(id).lean()) as IUser;
+  getOneById = async (id: string): Promise<IUser | null> => {
+    const user = await User.findById(id);
     return user;
   };
 
-  getOneByUsername = async (username: string): Promise<IUser> => {
-    const user = (await User.findOne({ username }).lean()) as IUser;
+  getOneByUsername = async (
+    username: string
+  ): Promise<IUser | null> => {
+    const user = await User.findOne({ username }).lean();
     return user;
   };
 
-  getOneByGoogleId = async (googleId: string): Promise<IUser> => {
-    const user = (await User.findOne({
+  getOneByGoogleId = async (
+    googleId: string
+  ): Promise<IUser | null> => {
+    const user = await User.findOne({
       googleId: googleId,
-    }).lean()) as IUser;
+    }).lean();
     return user;
   };
 }
