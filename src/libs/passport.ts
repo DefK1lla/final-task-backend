@@ -5,7 +5,7 @@ import passportLocal from 'passport-local';
 import passportGoogle from 'passport-google-oauth20';
 import bcrypt from 'bcryptjs';
 
-import type { IDBUser } from 'src/types/User';
+import type { IUser } from 'src/types/User';
 
 import {
   GOOGLE_CLIENT_ID,
@@ -18,13 +18,13 @@ const LocalStrategy = passportLocal.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
 
 passport.serializeUser((user, cb) => {
-  const { _id } = user as IDBUser;
+  const { _id } = user as IUser;
   cb(null, _id);
 });
 
 passport.deserializeUser(async (id: string, cb) => {
   try {
-    const user = (await User.findOne({ _id: id }).lean()) as IDBUser;
+    const user = (await User.findOne({ _id: id }).lean()) as IUser;
     cb(null, user);
   } catch (e) {
     console.log(e);
@@ -43,7 +43,7 @@ passport.use(
       try {
         const user = (await User.findOne({
           googleId: profile.id,
-        }).lean()) as IDBUser;
+        }).lean()) as IUser;
 
         if (!user) {
           const newUser = new User({
@@ -69,7 +69,7 @@ passport.use(
       try {
         const user = (await User.findOne({
           username: username,
-        }).lean()) as IDBUser;
+        }).lean()) as IUser;
 
         if (!user) return done(null, false);
 
