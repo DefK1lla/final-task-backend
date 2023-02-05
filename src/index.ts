@@ -1,37 +1,44 @@
 import mongoose, { Error } from 'mongoose';
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
 import MongoStore from 'connect-mongo';
 import passportGoogle from 'passport-google-oauth20';
+
+import {
+  PORT,
+  MONGODB_URI,
+  CLIENT_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  SECRET,
+} from './utils/config';
+
 import { IDBUser } from './typings/User';
 import User from './models/User';
 
 const LocalStrategy = passportLocal.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
 
-dotenv.config();
-
 mongoose.set('strictQuery', false);
 
-mongoose.connect(`${process.env.MONGODB_URI}`, () =>
+mongoose.connect(`${MONGODB_URI}`, () =>
   console.log('connected to mongodb')
 );
 
 const app = express();
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(
   session({
-    secret: 'secretcode',
+    secret: `${SECRET}`,
     resave: true,
     saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    store: MongoStore.create({ mongoUrl: MONGODB_URI }),
   })
 );
 app.use(cookieParser());
@@ -41,8 +48,8 @@ app.use(passport.session());
 passport.use(
   new GoogleStrategy(
     {
-      clientID: `${process.env.GOOGLE_CLIENT_ID}`,
-      clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
+      clientID: `${GOOGLE_CLIENT_ID}`,
+      clientSecret: `${GOOGLE_CLIENT_SECRET}`,
       callbackURL: '/auth/google/callback',
     },
     async (_, __, profile, cb) => {
@@ -80,7 +87,7 @@ app.get(
     session: true,
   }),
   (req, res) => {
-    res.redirect(process.env.CLIENT_URL as string);
+    res.redirect(CLIENT_URL as string);
   }
 );
 
@@ -169,6 +176,6 @@ app.get('/logout', (req, res) => {
   });
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Listening on port ${process.env.PORT}!`);
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}!`);
 });
