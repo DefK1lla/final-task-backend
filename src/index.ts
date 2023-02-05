@@ -8,11 +8,12 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import MongoStore from 'connect-mongo';
-import { Strategy } from 'passport-google-oauth20';
-import { IDBUser, IUser } from './typings/User';
+import passportGoogle from 'passport-google-oauth20';
+import { IDBUser } from './typings/User';
 import User from './models/User';
 
 const LocalStrategy = passportLocal.Strategy;
+const GoogleStrategy = passportGoogle.Strategy;
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ mongoose.connect(`${process.env.MONGODB_URI}`, () =>
 );
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(
   session({
@@ -38,32 +39,32 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(
-  new Strategy(
+  new GoogleStrategy(
     {
       clientID: `${process.env.GOOGLE_CLIENT_ID}`,
       clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
       callbackURL: '/auth/google/callback',
     },
-    function (_: any, __: any, profile: any, cb: any) {
-      User.findOne(
-        { googleId: profile.id },
-        async (err: Error, doc: IDBUser) => {
-          if (err) {
-            return cb(err, null);
-          }
+    async (_, __, profile, cb) => {
+      try {
+        const user = (await User.findOne({
+          googleId: profile.id,
+        }).lean()) as IDBUser;
 
-          if (!doc) {
-            const newUser = new User({
-              googleId: profile.id,
-              username: profile.displayName,
-            });
-
-            await newUser.save();
-            cb(null, newUser);
-          }
-          cb(null, doc);
+        if (!user) {
+          const newUser = new User({
+            googleId: profile.id,
+            username: profile.displayName,
+          });
+          await newUser.save();
+          cb(null, newUser);
+        } else {
+          cb(null, user);
         }
-      );
+      } catch (e) {
+        console.log(e);
+        cb(e as Error);
+      }
     }
   )
 );
@@ -79,63 +80,67 @@ app.get(
     session: true,
   }),
   (req, res) => {
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.CLIENT_URL as string);
   }
 );
 
 passport.use(
-  new LocalStrategy((username: string, password: string, done) => {
-    User.findOne(
-      { username: username },
-      (err: Error, user: IDBUser) => {
-        if (err) throw err;
+  new LocalStrategy(
+    async (username: string, password: string, done) => {
+      try {
+        const user = (await User.findOne({
+          username: username,
+        }).lean()) as IDBUser;
+
         if (!user) return done(null, false);
-        bcrypt.compare(
+
+        const isValid = await bcrypt.compare(
           password,
-          user.password as string,
-          (err, result: boolean) => {
-            if (err) throw err;
-            if (result === true) {
-              return done(null, user);
-            } else {
-              return done(null, false);
-            }
-          }
+          user.password as string
         );
+
+        if (isValid) return done(null, user);
+        return done(null, false);
+      } catch (e) {
+        console.log(e);
       }
-    );
-  })
+    }
+  )
 );
 
-passport.serializeUser((user: any, cb) => {
-  cb(null, user._id);
+passport.serializeUser((user, cb) => {
+  const { _id } = user as IDBUser;
+  cb(null, _id);
 });
 
-passport.deserializeUser((id: string, cb) => {
-  User.findOne({ _id: id }, (err: Error, user: IDBUser) => {
-    const userInformation: IUser = {
-      username: user.username,
-      id: user._id,
-    };
-    cb(err, userInformation);
-  });
+passport.deserializeUser(async (id: string, cb) => {
+  try {
+    const user = (await User.findOne({ _id: id }).lean()) as IDBUser;
+    cb(null, user);
+  } catch (e) {
+    console.log(e);
+    cb(e as Error, null);
+  }
 });
 
 app.post('/register', async (req, res) => {
-  const { username, password } = req?.body;
-  if (
-    !username ||
-    !password ||
-    typeof username !== 'string' ||
-    typeof password !== 'string'
-  ) {
-    res.status(400).json({ error: 'Improper Values' });
-    return;
-  }
-  User.findOne({ username }, async (err: Error, doc: IDBUser) => {
-    if (err) throw err;
-    if (doc) res.status(400).json({ error: 'User Already Exists' });
-    if (!doc) {
+  try {
+    const { username, password } = req?.body;
+    if (
+      !username ||
+      !password ||
+      typeof username !== 'string' ||
+      typeof password !== 'string'
+    ) {
+      res.status(400).json({ error: 'Improper Values' });
+      return;
+    }
+
+    const user = (await User.findOne({ username }).lean()) as IDBUser;
+
+    if (user) res.status(400).json({ error: 'User Already Exists' });
+
+    if (!user) {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
         username,
@@ -146,7 +151,10 @@ app.post('/register', async (req, res) => {
         .status(200)
         .json({ id: newUser._id, username: newUser.username });
     }
-  });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: 'server error' });
+  }
 });
 
 app.post('/login', passport.authenticate('local'), (req, res) => {
@@ -155,10 +163,9 @@ app.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  console.log(req.user);
   req.logOut(() => {
     res.clearCookie('connect.sid');
-    res.status(200).json({ message: 'success' });
+    res.status(200).json({ message: 'logut' });
   });
 });
 
