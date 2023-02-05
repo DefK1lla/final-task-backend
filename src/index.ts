@@ -12,7 +12,7 @@ import {
 } from './utils/config';
 
 import passport from './libs/passport';
-import router from './routes/indext';
+import router from './routes';
 
 const app = express();
 
