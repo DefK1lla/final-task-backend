@@ -23,7 +23,6 @@ router.post(
   passport.authenticate('local'),
   authController.localLogin
 );
-
 router.get('/logout', authController.logout);
 
 export default router;

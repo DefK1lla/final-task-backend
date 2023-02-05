@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 
 import bcrypt from 'bcryptjs';
 
-import type { IDBUser } from '../types/User';
+import type { IUser } from '../types/User';
 
 import { CLIENT_URL, PASSWORD_SALT } from '../utils/config';
 
@@ -29,7 +29,7 @@ class AuthController {
 
       const user = (await User.findOne({
         username,
-      }).lean()) as IDBUser;
+      }).lean()) as IUser;
 
       if (user)
         res.status(400).json({ error: 'User Already Exists' });
@@ -55,7 +55,7 @@ class AuthController {
   };
 
   localLogin = (req: Request, res: Response) => {
-    const user = req.user as IDBUser;
+    const user = req.user as IUser;
     res.status(200).json({ id: user._id, username: user.username });
   };
 
