@@ -8,6 +8,7 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const CLIENT_URL = process.env.CLIENT_URL;
 const SECRET = process.env.SECRETSECRET_KEY;
+const PASSWORD_SALT = Number(process.env.PASSWORD_SALT);
 
 export {
   PORT,
@@ -16,4 +17,5 @@ export {
   GOOGLE_CLIENT_SECRET,
   CLIENT_URL,
   SECRET,
+  PASSWORD_SALT,
 };

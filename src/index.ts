@@ -1,36 +1,25 @@
-import mongoose, { Error } from 'mongoose';
 import express from 'express';
 import cors from 'cors';
-import passport from 'passport';
-import passportLocal from 'passport-local';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import MongoStore from 'connect-mongo';
-import passportGoogle from 'passport-google-oauth20';
 
 import {
   PORT,
   MONGODB_URI,
   CLIENT_URL,
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
   SECRET,
+  PASSWORD_SALT,
 } from './utils/config';
 
-import { IDBUser } from './typings/User';
+import { IDBUser } from './types/User';
 import User from './models/User';
 
-const LocalStrategy = passportLocal.Strategy;
-const GoogleStrategy = passportGoogle.Strategy;
-
-mongoose.set('strictQuery', false);
-
-mongoose.connect(`${MONGODB_URI}`, () =>
-  console.log('connected to mongodb')
-);
+import passport from './libs/passport';
 
 const app = express();
+
 app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(
@@ -44,37 +33,6 @@ app.use(
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: `${GOOGLE_CLIENT_ID}`,
-      clientSecret: `${GOOGLE_CLIENT_SECRET}`,
-      callbackURL: '/auth/google/callback',
-    },
-    async (_, __, profile, cb) => {
-      try {
-        const user = (await User.findOne({
-          googleId: profile.id,
-        }).lean()) as IDBUser;
-
-        if (!user) {
-          const newUser = new User({
-            googleId: profile.id,
-            username: profile.displayName,
-          });
-          await newUser.save();
-          cb(null, newUser);
-        } else {
-          cb(null, user);
-        }
-      } catch (e) {
-        console.log(e);
-        cb(e as Error);
-      }
-    }
-  )
-);
 
 app.get(
   '/auth/google',
@@ -90,45 +48,6 @@ app.get(
     res.redirect(CLIENT_URL as string);
   }
 );
-
-passport.use(
-  new LocalStrategy(
-    async (username: string, password: string, done) => {
-      try {
-        const user = (await User.findOne({
-          username: username,
-        }).lean()) as IDBUser;
-
-        if (!user) return done(null, false);
-
-        const isValid = await bcrypt.compare(
-          password,
-          user.password as string
-        );
-
-        if (isValid) return done(null, user);
-        return done(null, false);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  )
-);
-
-passport.serializeUser((user, cb) => {
-  const { _id } = user as IDBUser;
-  cb(null, _id);
-});
-
-passport.deserializeUser(async (id: string, cb) => {
-  try {
-    const user = (await User.findOne({ _id: id }).lean()) as IDBUser;
-    cb(null, user);
-  } catch (e) {
-    console.log(e);
-    cb(e as Error, null);
-  }
-});
 
 app.post('/register', async (req, res) => {
   try {
@@ -148,7 +67,10 @@ app.post('/register', async (req, res) => {
     if (user) res.status(400).json({ error: 'User Already Exists' });
 
     if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(
+        password,
+        PASSWORD_SALT
+      );
       const newUser = new User({
         username,
         password: hashedPassword,
