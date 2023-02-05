@@ -13,6 +13,7 @@ import {
 } from '../utils/config';
 
 import User from '../models/User';
+import userService from '../services/userService';
 
 const LocalStrategy = passportLocal.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
@@ -24,7 +25,7 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser(async (id: string, cb) => {
   try {
-    const user = (await User.findOne({ _id: id }).lean()) as IUser;
+    const user = userService.getOneById(id);
     cb(null, user);
   } catch (e) {
     console.log(e);
@@ -41,9 +42,7 @@ passport.use(
     },
     async (_, __, profile, cb) => {
       try {
-        const user = (await User.findOne({
-          googleId: profile.id,
-        }).lean()) as IUser;
+        const user = await userService.getOneByGoogleId(profile.id);
 
         if (!user) {
           const newUser = new User({
@@ -67,9 +66,7 @@ passport.use(
   new LocalStrategy(
     async (username: string, password: string, done) => {
       try {
-        const user = (await User.findOne({
-          username: username,
-        }).lean()) as IUser;
+        const user = await userService.getOneByUsername(username);
 
         if (!user) return done(null, false);
 

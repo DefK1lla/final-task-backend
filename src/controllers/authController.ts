@@ -6,7 +6,7 @@ import type { IUser } from '../types/User';
 
 import { CLIENT_URL, PASSWORD_SALT } from '../utils/config';
 
-import User from '../models/User';
+import userService from '../services/userService';
 
 class AuthController {
   googleCallback = (req: Request, res: Response) => {
@@ -27,27 +27,24 @@ class AuthController {
         return;
       }
 
-      const user = (await User.findOne({
-        username,
-      }).lean()) as IUser;
+      const user = await userService.getOneByUsername(username);
 
-      if (user)
+      if (user) {
         res.status(400).json({ error: 'User Already Exists' });
-
-      if (!user) {
-        const hashedPassword = await bcrypt.hash(
-          password,
-          PASSWORD_SALT
-        );
-        const newUser = new User({
-          username,
-          password: hashedPassword,
-        });
-        await newUser.save();
-        res
-          .status(200)
-          .json({ id: newUser._id, username: newUser.username });
+        return;
       }
+
+      const hashedPassword = await bcrypt.hash(
+        password,
+        PASSWORD_SALT
+      );
+      const newUser = await userService.create({
+        username,
+        password: hashedPassword,
+      });
+      res
+        .status(200)
+        .json({ id: newUser._id, username: newUser.username });
     } catch (e) {
       console.log(e);
       res.status(500).json({ message: 'Server Error' });
