@@ -7,6 +7,7 @@ import type { IUser } from '../types/User';
 import { CLIENT_URL, PASSWORD_SALT } from '../utils/config';
 
 import userService from '../services/userService';
+import { validateRegister } from '../utils/helpers/validations';
 
 class AuthController {
   googleCallback = (req: Request, res: Response) => {
@@ -17,12 +18,9 @@ class AuthController {
     try {
       const { username, password } = req?.body;
 
-      if (
-        !username ||
-        !password ||
-        typeof username !== 'string' ||
-        typeof password !== 'string'
-      ) {
+      const isValid = validateRegister(username, password);
+
+      if (!isValid) {
         res.status(400).json({ error: 'Improper Values' });
         return;
       }
