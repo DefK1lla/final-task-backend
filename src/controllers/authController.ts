@@ -55,7 +55,7 @@ class AuthController {
 
   localLogin = (req: Request, res: Response) => {
     const user = req.user as IUser;
-    res.status(200).json({ id: user._id, username: user.username });
+    res.status(200).json({ _id: user._id, username: user.username });
   };
 
   logout = (req: Request, res: Response) => {
