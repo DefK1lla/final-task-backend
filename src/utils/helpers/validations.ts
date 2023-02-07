@@ -3,8 +3,8 @@ export const validateRegister = (
   password: string
 ) => {
   return (
-    !username &&
-    !password &&
+    username &&
+    password &&
     typeof username === 'string' &&
     typeof password === 'string' &&
     username.length > 3 &&
