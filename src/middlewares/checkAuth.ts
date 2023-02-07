@@ -16,7 +16,7 @@ export default function checkAuth(
       return res.status(401).json({ message: 'Unauthorized' });
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(401).json({ message: 'Unauthorized' });
   }
 }

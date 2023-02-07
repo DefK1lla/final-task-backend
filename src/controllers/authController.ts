@@ -48,7 +48,7 @@ class AuthController {
         .status(200)
         .json({ id: newUser._id, username: newUser.username });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       res.status(500).json({ message: 'Server Error' });
     }
   };
@@ -69,7 +69,7 @@ class AuthController {
     try {
       res.json(req.user);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       res.status(500).send('Server Error');
     }
   };
