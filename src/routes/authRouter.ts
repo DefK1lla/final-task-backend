@@ -24,5 +24,6 @@ router.post(
   authController.localLogin
 );
 router.get('/logout', authController.logout);
+router.get('/me', authController.getMe);
 
 export default router;

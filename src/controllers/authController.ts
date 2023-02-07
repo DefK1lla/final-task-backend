@@ -62,6 +62,15 @@ class AuthController {
       res.status(200).json({ message: 'Logout' });
     });
   };
+
+  getMe = async (req: Request, res: Response) => {
+    try {
+      res.send(req.user);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send('Server Error');
+    }
+  };
 }
 
 export default new AuthController();

@@ -25,8 +25,8 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser(async (id: string, cb) => {
   try {
-    const user = userService.getOneById(id);
-    cb(null, user);
+    const user = await userService.getOneById(id);
+    cb(null, { username: user?.username, _id: user?._id });
   } catch (e) {
     console.log(e);
     cb(e as Error, null);
