@@ -21,7 +21,13 @@ class AuthController {
       const isValid = validateRegister(username, password);
 
       if (!isValid) {
-        res.status(400).json({ error: 'Improper Values' });
+        res
+          .status(400)
+          .json({
+            error: 'Improper Values.',
+            username: 'Min length 3',
+            password: 'Min length 5',
+          });
         return;
       }
 
