@@ -21,13 +21,11 @@ class AuthController {
       const isValid = validateRegister(username, password);
 
       if (!isValid) {
-        res
-          .status(400)
-          .json({
-            error: 'Improper Values.',
-            username: 'Min length 3',
-            password: 'Min length 5',
-          });
+        res.status(400).json({
+          error: 'Improper Values.',
+          username: 'Min length 3',
+          password: 'Min length 5',
+        });
         return;
       }
 
@@ -69,7 +67,7 @@ class AuthController {
 
   getMe = async (req: Request, res: Response) => {
     try {
-      res.send(req.user);
+      res.json(req.user);
     } catch (e) {
       console.log(e);
       res.status(500).send('Server Error');
