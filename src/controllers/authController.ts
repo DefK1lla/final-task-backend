@@ -7,6 +7,7 @@ import type { IUser } from '../types/User';
 import { CLIENT_URL, PASSWORD_SALT } from '../utils/config';
 
 import userService from '../services/userService';
+import { validateRegister } from '../utils/helpers/validations';
 
 class AuthController {
   googleCallback = (req: Request, res: Response) => {
@@ -14,46 +15,39 @@ class AuthController {
   };
 
   localRegister = async (req: Request, res: Response) => {
-    try {
-      const { username, password } = req?.body;
+    const { username, password } = req?.body;
 
-      if (
-        !username ||
-        !password ||
-        typeof username !== 'string' ||
-        typeof password !== 'string'
-      ) {
-        res.status(400).json({ error: 'Improper Values' });
-        return;
-      }
+    const isValid = validateRegister(username, password);
 
-      const user = await userService.getOneByUsername(username);
-
-      if (user) {
-        res.status(400).json({ error: 'User Already Exists' });
-        return;
-      }
-
-      const hashedPassword = await bcrypt.hash(
-        password,
-        PASSWORD_SALT
-      );
-      const newUser = await userService.create({
-        username,
-        password: hashedPassword,
+    if (!isValid) {
+      res.status(400).json({
+        error: 'Improper Values.',
+        username: 'Min length 3',
+        password: 'Min length 5',
       });
-      res
-        .status(200)
-        .json({ id: newUser._id, username: newUser.username });
-    } catch (e) {
-      console.log(e);
-      res.status(500).json({ message: 'Server Error' });
+      return;
     }
+
+    const user = await userService.getOneByUsername(username);
+
+    if (user) {
+      res.status(400).json({ error: 'User Already Exists' });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, PASSWORD_SALT);
+    const newUser = await userService.create({
+      username,
+      password: hashedPassword,
+    });
+    res
+      .status(200)
+      .json({ _id: newUser._id, username: newUser.username });
   };
 
   localLogin = (req: Request, res: Response) => {
     const user = req.user as IUser;
-    res.status(200).json({ id: user._id, username: user.username });
+    res.status(200).json({ _id: user._id, username: user.username });
   };
 
   logout = (req: Request, res: Response) => {
@@ -61,6 +55,10 @@ class AuthController {
       res.clearCookie('connect.sid');
       res.status(200).json({ message: 'Logout' });
     });
+  };
+
+  getMe = async (req: Request, res: Response) => {
+    res.json(req.user);
   };
 }
 

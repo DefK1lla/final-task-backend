@@ -25,10 +25,10 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser(async (id: string, cb) => {
   try {
-    const user = userService.getOneById(id);
-    cb(null, user);
+    const user = await userService.getOneById(id);
+    cb(null, { username: user?.username, _id: user?._id });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     cb(e as Error, null);
   }
 });
@@ -55,7 +55,7 @@ passport.use(
           cb(null, user);
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         cb(e as Error);
       }
     }
@@ -78,7 +78,8 @@ passport.use(
         if (isValid) return done(null, user);
         return done(null, false);
       } catch (e) {
-        console.log(e);
+        console.error(e);
+        done(e);
       }
     }
   )

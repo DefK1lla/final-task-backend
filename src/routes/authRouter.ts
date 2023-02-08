@@ -3,6 +3,7 @@ import { Router } from 'express';
 import passport from '../libs/passport';
 
 import authController from '../controllers/authController';
+import checkAuth from '../middlewares/checkAuth';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.post(
   authController.localLogin
 );
 router.get('/logout', authController.logout);
+router.get('/me', checkAuth, authController.getMe);
 
 export default router;

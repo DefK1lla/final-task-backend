@@ -4,8 +4,10 @@ import type { IUser } from '../types/User';
 
 const userSchema = new mongoose.Schema<IUser>({
   username: {
+    required: true,
     type: String,
     unique: true,
+    index: true,
   },
   password: {
     required: false,
@@ -14,6 +16,8 @@ const userSchema = new mongoose.Schema<IUser>({
   googleId: {
     required: false,
     type: String,
+    unique: true,
+    index: true,
   },
 });
 
