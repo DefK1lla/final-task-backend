@@ -15,42 +15,34 @@ class AuthController {
   };
 
   localRegister = async (req: Request, res: Response) => {
-    try {
-      const { username, password } = req?.body;
+    const { username, password } = req?.body;
 
-      const isValid = validateRegister(username, password);
+    const isValid = validateRegister(username, password);
 
-      if (!isValid) {
-        res.status(400).json({
-          error: 'Improper Values.',
-          username: 'Min length 3',
-          password: 'Min length 5',
-        });
-        return;
-      }
-
-      const user = await userService.getOneByUsername(username);
-
-      if (user) {
-        res.status(400).json({ error: 'User Already Exists' });
-        return;
-      }
-
-      const hashedPassword = await bcrypt.hash(
-        password,
-        PASSWORD_SALT
-      );
-      const newUser = await userService.create({
-        username,
-        password: hashedPassword,
+    if (!isValid) {
+      res.status(400).json({
+        error: 'Improper Values.',
+        username: 'Min length 3',
+        password: 'Min length 5',
       });
-      res
-        .status(200)
-        .json({ _id: newUser._id, username: newUser.username });
-    } catch (e) {
-      console.error(e);
-      res.status(500).json({ message: 'Server Error' });
+      return;
     }
+
+    const user = await userService.getOneByUsername(username);
+
+    if (user) {
+      res.status(400).json({ error: 'User Already Exists' });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, PASSWORD_SALT);
+    const newUser = await userService.create({
+      username,
+      password: hashedPassword,
+    });
+    res
+      .status(200)
+      .json({ _id: newUser._id, username: newUser.username });
   };
 
   localLogin = (req: Request, res: Response) => {
@@ -66,12 +58,7 @@ class AuthController {
   };
 
   getMe = async (req: Request, res: Response) => {
-    try {
-      res.json(req.user);
-    } catch (e) {
-      console.error(e);
-      res.status(500).send('Server Error');
-    }
+    res.json(req.user);
   };
 }
 

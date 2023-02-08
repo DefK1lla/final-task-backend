@@ -5,18 +5,13 @@ export default function checkAuth(
   res: Response,
   next: NextFunction
 ) {
-  try {
-    if (req.method === 'OPTIONS') {
-      return next();
-    }
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
 
-    if (req.isAuthenticated()) {
-      return next();
-    } else {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-  } catch (e) {
-    console.error(e);
-    res.status(401).json({ message: 'Unauthorized' });
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    return res.status(401).json({ message: 'Unauthorized' });
   }
 }
