@@ -79,6 +79,7 @@ passport.use(
         return done(null, false);
       } catch (e) {
         console.error(e);
+        done(e);
       }
     }
   )
