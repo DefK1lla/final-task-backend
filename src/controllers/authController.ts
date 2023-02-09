@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 import bcrypt from 'bcryptjs';
 
@@ -8,6 +8,7 @@ import { CLIENT_URL, PASSWORD_SALT } from '../utils/config';
 
 import userService from '../services/userService';
 import { validateRegister } from '../utils/helpers/validations';
+import passport from '../libs/passport';
 
 class AuthController {
   googleCallback = (req: Request, res: Response) => {
@@ -21,7 +22,7 @@ class AuthController {
 
     if (!isValid) {
       res.status(400).json({
-        error: 'Improper Values.',
+        message: 'Improper Values.',
         username: 'Min length 3',
         password: 'Min length 5',
       });
@@ -31,7 +32,7 @@ class AuthController {
     const user = await userService.getOneByUsername(username);
 
     if (user) {
-      res.status(400).json({ error: 'User Already Exists' });
+      res.status(400).json({ message: 'User Already Exists' });
       return;
     }
 
@@ -45,9 +46,24 @@ class AuthController {
       .json({ _id: newUser._id, username: newUser.username });
   };
 
-  localLogin = (req: Request, res: Response) => {
-    const user = req.user as IUser;
-    res.status(200).json({ _id: user._id, username: user.username });
+  localLogin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    passport.authenticate('local', (err, user: IUser) => {
+      if (err) return next(err);
+      if (!user) {
+        return res
+          .status(400)
+          .json({ message: 'Incorrect username or password' });
+      }
+      req.logIn(user, err => {
+        return res
+          .status(200)
+          .json({ _id: user._id, username: user.username });
+      });
+    })(req, res, next);
   };
 
   logout = (req: Request, res: Response) => {

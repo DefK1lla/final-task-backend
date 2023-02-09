@@ -19,11 +19,7 @@ router.get(
   authController.googleCallback
 );
 router.post('/register', authController.localRegister);
-router.post(
-  '/login',
-  passport.authenticate('local'),
-  authController.localLogin
-);
+router.post('/login', authController.localLogin);
 router.get('/logout', authController.logout);
 router.get('/me', checkAuth, authController.getMe);
 
