@@ -68,7 +68,10 @@ passport.use(
       try {
         const user = await userService.getOneByUsername(username);
 
-        if (!user) return done(null, false);
+        if (!user)
+          return done(null, false, {
+            message: 'Incorrect username or password',
+          });
 
         const isValid = await bcrypt.compare(
           password,
@@ -76,7 +79,9 @@ passport.use(
         );
 
         if (isValid) return done(null, user);
-        return done(null, false);
+        return done(null, false, {
+          message: 'Incorrect username or password',
+        });
       } catch (e) {
         console.error(e);
         done(e);
