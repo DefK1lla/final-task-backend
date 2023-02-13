@@ -53,6 +53,7 @@ class AuthController {
   ) => {
     passport.authenticate('local', (err, user: IUser) => {
       if (err) return next(err);
+      console.log(1);
       if (!user) {
         return res
           .status(400)
