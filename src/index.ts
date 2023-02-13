@@ -26,6 +26,8 @@ app.use(
   })
 );
 
+app.set('trust proxy', 1);
+
 app.use(
   session({
     secret: `${SECRET}`,
@@ -34,6 +36,7 @@ app.use(
     store: MongoStore.create({ mongoUrl: MONGODB_URI }),
     cookie: {
       sameSite: false,
+      secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
