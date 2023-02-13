@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node build/dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc -p ."
+    "prebuild": "npm install",
+    "build": "rimraf dist && tsc",
+    "prebuildvercel-build": "npm install",
+    "vercel-build": "rimraf dist && tsc"
   },
   "repository": {
     "type": "git",
