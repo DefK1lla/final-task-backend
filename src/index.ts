@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -17,17 +17,28 @@ import errorHandler from './utils/errorHandler';
 
 const app = express();
 
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: [`${CLIENT_URL}`, 'http://localhost:3000'],
+    credentials: true,
+  })
+);
+
 app.use(
   session({
     secret: `${SECRET}`,
     resave: true,
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl: MONGODB_URI }),
-    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 },
+    cookie: {
+      sameSite: false,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   })
 );
+
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
