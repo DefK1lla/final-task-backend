@@ -8,7 +8,6 @@
     "dev": "nodemon src/index.ts",
     "prebuild": "npm install",
     "build": "rimraf dist && tsc",
-    "prevercel-build": "npm install",
     "vercel-build": "rimraf dist && tsc",
     "prevercel-build": "npm install"
   },
