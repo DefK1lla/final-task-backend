@@ -35,7 +35,7 @@ app.use(
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl: MONGODB_URI }),
     cookie: {
-      domain: CLIENT_URL,
+      domain: 'http://localhost:3000',
       sameSite: 'none',
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
