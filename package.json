@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node build/dist/index.js",
     "dev": "nodemon src/index.ts",
+    "prebuild": "npm i",
     "build": "tsc -p ."
   },
   "repository": {
