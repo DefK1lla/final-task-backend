@@ -1,23 +1,23 @@
-import express, { NextFunction, Request, Response } from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import MongoStore from 'connect-mongo';
+import express, { NextFunction, Request, Response } from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 
-import {
-  PORT,
-  MONGODB_URI,
-  CLIENT_URL,
-  SECRET,
-} from './utils/config';
+import { PORT, MONGODB_URI, CLIENT_URL, SECRET } from "./utils/config";
 
-import passport from './libs/passport';
-import router from './routes';
-import errorHandler from './utils/errorHandler';
+import passport from "./libs/passport";
+import router from "./routes";
+import errorHandler from "./utils/errorHandler";
 
 const app = express();
 
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+app.use(
+  cors({
+    origin: [`${CLIENT_URL}`, "https://localhost:3000"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(
   session({
