@@ -12,7 +12,7 @@ import passport from '../libs/passport';
 
 class AuthController {
   googleCallback = (req: Request, res: Response) => {
-    res.redirect(CLIENT_URL as string);
+    res.redirect('http://localhost:3000');
   };
 
   localRegister = async (req: Request, res: Response) => {
