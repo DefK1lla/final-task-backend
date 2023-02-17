@@ -12,26 +12,31 @@ const scoreSchema = new mongoose.Schema<IScore>({
   game: {
     required: true,
     type: String,
+    index: true,
   },
   score: {
     required: true,
     type: String,
+    index: true,
   },
   correct: {
     required: false,
     type: String,
+    index: true,
   },
   accuracy: {
     required: false,
     type: String,
+    index: true,
   },
   date: {
     required: true,
     type: Date,
     default: Date.now,
+    index: true,
   },
 });
 
-scoreSchema.index({ user: 1, game: 1 }, { unique: true });
+scoreSchema.index({ user: 1, game: 1, date: 1 }, { unique: true });
 
 export default mongoose.model<IScore>('Score', scoreSchema);
