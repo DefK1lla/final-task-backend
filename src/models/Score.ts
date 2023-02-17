@@ -1,6 +1,6 @@
 import mongoose from '../libs/mongoose';
 
-import type { IScore } from 'src/types/Score';
+import type { IScore } from '../types/Score';
 
 const scoreSchema = new mongoose.Schema<IScore>({
   user: {
