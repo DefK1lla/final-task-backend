@@ -46,7 +46,8 @@ class ScoreService {
     const leaders = await Score.find({ game })
       .sort({ score: -1 })
       .limit(10)
-      .populate({ path: 'user', select: 'username' });
+      .populate({ path: 'user', select: 'username' })
+      .lean();
     return leaders;
   };
 }
