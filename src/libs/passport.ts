@@ -1,19 +1,16 @@
-import type { Error } from 'mongoose';
+import type { Error } from "mongoose";
 
-import passport from 'passport';
-import passportLocal from 'passport-local';
-import passportGoogle from 'passport-google-oauth20';
-import bcrypt from 'bcryptjs';
+import passport from "passport";
+import passportLocal from "passport-local";
+import passportGoogle from "passport-google-oauth20";
+import bcrypt from "bcryptjs";
 
-import type { IUser } from 'src/types/User';
+import type { IUser } from "src/types/User";
 
-import {
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-} from '../utils/config';
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../utils/config";
 
-import User from '../models/User';
-import userService from '../services/userService';
+import User from "../models/User";
+import userService from "../services/userService";
 
 const LocalStrategy = passportLocal.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
@@ -38,7 +35,7 @@ passport.use(
     {
       clientID: `${GOOGLE_CLIENT_ID}`,
       clientSecret: `${GOOGLE_CLIENT_SECRET}`,
-      callbackURL: '/auth/google/callback',
+      callbackURL: "/auth/google/callback",
     },
     async (_, __, profile, cb) => {
       try {
@@ -63,31 +60,26 @@ passport.use(
 );
 
 passport.use(
-  new LocalStrategy(
-    async (username: string, password: string, done) => {
-      try {
-        const user = await userService.getOneByUsername(username);
+  new LocalStrategy(async (username: string, password: string, done) => {
+    try {
+      const user = await userService.getOneByUsername(username);
 
-        if (!user)
-          return done(null, false, {
-            message: 'Incorrect username or password',
-          });
-
-        const isValid = await bcrypt.compare(
-          password,
-          user.password as string
-        );
-
-        if (isValid) return done(null, user);
+      if (!user)
         return done(null, false, {
-          message: 'Incorrect username or password',
+          message: "Incorrect username or password",
         });
-      } catch (e) {
-        console.error(e);
-        done(e);
-      }
+
+      const isValid = await bcrypt.compare(password, user.password as string);
+
+      if (isValid) return done(null, user);
+      return done(null, false, {
+        message: "Incorrect username or password",
+      });
+    } catch (e) {
+      console.error(e);
+      done(e);
     }
-  )
+  })
 );
 
 export default passport;
