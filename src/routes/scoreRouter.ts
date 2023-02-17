@@ -5,5 +5,9 @@ import checkAuth from '../middlewares/checkAuth';
 
 const router = Router();
 
-router.get('/', checkAuth, scoreController.getByUserId);
-router.post('/', checkAuth, scoreController.create);
+router.get('/:game', checkAuth, scoreController.getByUserId);
+router.post('/:game', checkAuth, scoreController.create);
+router.get('/best/:game', scoreController.getUserBestScore);
+router.get('/leaderboard/:game', scoreController.getLeaders);
+
+export default router;

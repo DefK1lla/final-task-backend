@@ -26,6 +26,19 @@ class ScoreController {
     );
     res.status(200).json(scores);
   };
+
+  getUserBestScore = async (req: Request, res: Response) => {
+    const userId = req.params.id;
+    const game = req.params.game;
+    const score = await scoreService.getUserBestScore(userId, game);
+    res.status(200).json(score);
+  };
+
+  getLeaders = async (req: Request, res: Response) => {
+    const game = req.params.game;
+    const leaders = await scoreService.getLeaders(game);
+    res.status(200).json(leaders);
+  };
 }
 
 export default new ScoreController();

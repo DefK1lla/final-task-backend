@@ -21,9 +21,33 @@ class ScoreService {
       date: {
         $gt: new Date().getTime() - distance,
       },
-    });
+    })
+      .sort({ date: -1 })
+      .lean();
 
     return score;
+  };
+
+  getUserBestScore = async (
+    user: string,
+    game: string
+  ): Promise<IScore[]> => {
+    const score = await Score.find({
+      user,
+      game,
+    })
+      .sort({ score: -1 })
+      .limit(5)
+      .lean();
+    return score;
+  };
+
+  getLeaders = async (game: string): Promise<IScore[]> => {
+    const leaders = await Score.find({ game })
+      .sort({ score: -1 })
+      .limit(10)
+      .populate({ path: 'user', select: 'username' });
+    return leaders;
   };
 }
 
