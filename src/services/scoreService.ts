@@ -1,3 +1,4 @@
+import type { ObjectId } from 'mongoose';
 import type { IScore } from 'src/types/Score';
 
 import Score from '../models/Score';
@@ -10,7 +11,7 @@ class ScoreService {
   };
 
   getByUserId = async (
-    userId: string,
+    userId: ObjectId,
     distance: number,
     game: string
   ): Promise<IScore[]> => {

@@ -1,21 +1,24 @@
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 
 import type {
-  createUserRequest,
-  getByUserIdRequest,
+  getByUserIdParams,
+  createUserBody,
 } from '../types/http';
+import type { IUser } from '../types/User';
 
-import scoreService from 'src/services/scoreService';
+import scoreService from '../services/scoreService';
 
 class ScoreController {
-  create = async (req: createUserRequest, res: Response) => {
-    const { score } = req?.body;
-    const newScore = await scoreService.create(score);
+  create = async (req: Request, res: Response) => {
+    const body: createUserBody = req?.body;
+    const newScore = await scoreService.create(body.score);
     res.status(200).json(newScore);
   };
 
-  getByUserId = async (req: getByUserIdRequest, res: Response) => {
-    const { userId, distance, game } = req.params;
+  getByUserId = async (req: Request, res: Response) => {
+    const { _id: userId } = req.user as IUser;
+    const { distance, game }: getByUserIdParams =
+      req.params as unknown as getByUserIdParams;
     const scores = await scoreService.getByUserId(
       userId,
       distance,
