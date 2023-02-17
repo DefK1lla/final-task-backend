@@ -17,7 +17,7 @@ const gameSchema = new mongoose.Schema<IScore>({
     required: true,
     type: String,
   },
-  currect: {
+  correct: {
     required: false,
     type: String,
   },
@@ -25,6 +25,13 @@ const gameSchema = new mongoose.Schema<IScore>({
     required: false,
     type: String,
   },
+  date: {
+    required: true,
+    type: Date,
+    default: Date.now,
+  },
 });
+
+gameSchema.index({ user: 1, game: 1 }, { unique: true });
 
 export default mongoose.model<IScore>('Game', gameSchema);
