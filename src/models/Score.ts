@@ -2,7 +2,7 @@ import mongoose from '../libs/mongoose';
 
 import type { IScore } from 'src/types/Score';
 
-const gameSchema = new mongoose.Schema<IScore>({
+const scoreSchema = new mongoose.Schema<IScore>({
   user: {
     required: true,
     type: mongoose.Schema.Types.ObjectId,
@@ -32,6 +32,6 @@ const gameSchema = new mongoose.Schema<IScore>({
   },
 });
 
-gameSchema.index({ user: 1, game: 1 }, { unique: true });
+scoreSchema.index({ user: 1, game: 1 }, { unique: true });
 
-export default mongoose.model<IScore>('Game', gameSchema);
+export default mongoose.model<IScore>('Score', scoreSchema);
