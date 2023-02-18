@@ -29,7 +29,7 @@ class ScoreService {
   };
 
   getUserBestScore = async (
-    user: ObjectId,
+    user: ObjectId | String,
     game: string
   ): Promise<IScore[]> => {
     const score = await Score.find({
