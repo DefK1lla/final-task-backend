@@ -27,7 +27,8 @@ class ScoreController {
   };
 
   getUserBestScore = async (req: Request, res: Response) => {
-    const userId = req.params.id;
+    const user = req.user as IUser;
+    const userId = user._id;
     const game = req.params.game;
     const score = await scoreService.getUserBestScore(userId, game);
     res.status(200).json(score);
