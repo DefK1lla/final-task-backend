@@ -21,6 +21,13 @@ class ScoreController {
     res.status(200).json(newScore);
   };
 
+  getUserLastResults = async (req: Request, res: Response) => {
+    const { _id } = req.user as IUser;
+    const game = req.params.game;
+    const score = await scoreService.getUserLastResults(_id, game);
+    res.status(200).json(score);
+  };
+
   getByUserId = async (req: Request, res: Response) => {
     const { _id: userId } = req.user as IUser;
     const { distance, game }: getByUserIdParams =
@@ -33,11 +40,11 @@ class ScoreController {
     res.status(200).json(scores);
   };
 
-  getUserBestScore = async (req: Request, res: Response) => {
+  getUserBestResults = async (req: Request, res: Response) => {
     const user = req.user as IUser;
     const userId = user._id;
     const game = req.params.game;
-    const score = await scoreService.getUserBestScore(userId, game);
+    const score = await scoreService.getUserBestResults(userId, game);
     res.status(200).json(score);
   };
 

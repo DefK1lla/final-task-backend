@@ -10,6 +10,18 @@ class ScoreService {
     return newScore;
   };
 
+  getUserLastResults = async (
+    user: ObjectId,
+    game: string
+  ): Promise<IScore> => {
+    const score = await Score.find({ user, game })
+      .sort({ date: -1 })
+      .limit(1)
+      .lean();
+
+    return score[0];
+  };
+
   getByUserId = async (
     userId: ObjectId,
     distance: number,
@@ -28,7 +40,7 @@ class ScoreService {
     return score;
   };
 
-  getUserBestScore = async (
+  getUserBestResults = async (
     user: ObjectId | String,
     game: string
   ): Promise<IScore[]> => {

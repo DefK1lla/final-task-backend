@@ -10,7 +10,7 @@ router.post('/:game', checkAuth, scoreController.create);
 router.get(
   '/best/:game',
   checkAuth,
-  scoreController.getUserBestScore
+  scoreController.getUserBestResults
 );
 router.get('/leaderboard/:game', scoreController.getLeaders);
 
