@@ -15,6 +15,7 @@ class ScoreService {
     game: string
   ): Promise<IScore> => {
     const score = await Score.find({ user, game })
+      .select({ game: 0 })
       .sort({ date: -1 })
       .limit(1)
       .lean();
@@ -34,6 +35,7 @@ class ScoreService {
         $gt: new Date().getTime() - distance,
       },
     })
+      .select({ game: 0 })
       .sort({ date: -1 })
       .lean();
 
@@ -48,6 +50,7 @@ class ScoreService {
       user,
       game,
     })
+      .select({ game: 0 })
       .sort({ score: -1 })
       .limit(5)
       .lean();
@@ -56,6 +59,7 @@ class ScoreService {
 
   getLeaders = async (game: string): Promise<IScore[]> => {
     const leaders = await Score.find({ game })
+      .select({ game: 0 })
       .sort({ score: -1 })
       .limit(10)
       .populate({ path: 'user', select: 'username' })

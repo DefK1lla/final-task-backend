@@ -25,7 +25,7 @@ class ScoreController {
     const { _id } = req.user as IUser;
     const game = req.params.game;
     const score = await scoreService.getUserLastResults(_id, game);
-    res.status(200).json(score);
+    res.status(200).json({ game, results: score });
   };
 
   getByUserId = async (req: Request, res: Response) => {
@@ -37,7 +37,7 @@ class ScoreController {
       distance,
       game
     );
-    res.status(200).json(scores);
+    res.status(200).json({ game, results: scores });
   };
 
   getUserBestResults = async (req: Request, res: Response) => {
@@ -45,13 +45,13 @@ class ScoreController {
     const userId = user._id;
     const game = req.params.game;
     const score = await scoreService.getUserBestResults(userId, game);
-    res.status(200).json(score);
+    res.status(200).json({ game, results: score });
   };
 
   getLeaders = async (req: Request, res: Response) => {
     const game = req.params.game;
     const leaders = await scoreService.getLeaders(game);
-    res.status(200).json(leaders);
+    res.status(200).json({ game, leaders });
   };
 }
 
