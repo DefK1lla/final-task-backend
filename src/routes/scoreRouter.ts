@@ -12,6 +12,11 @@ router.get(
   checkAuth,
   scoreController.getUserBestResults
 );
+router.get(
+  '/last/:game',
+  checkAuth,
+  scoreController.getUserLastResults
+);
 router.get('/leaderboard/:game', scoreController.getLeaders);
 
 export default router;
