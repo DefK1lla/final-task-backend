@@ -5,7 +5,8 @@ export interface IScore {
   user: ObjectId | string;
   game: string;
   score: string;
+  timestamp: Date;
   correct?: string;
   accuracy?: string;
-  date: Date;
+  lastBoard?: number;
 }

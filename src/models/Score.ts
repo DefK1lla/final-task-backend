@@ -29,10 +29,15 @@ const scoreSchema = new mongoose.Schema<IScore>({
     type: String,
     index: true,
   },
-  date: {
+  timestamp: {
     required: true,
     type: Date,
     default: Date.now,
+    index: true,
+  },
+  lastBoard: {
+    required: false,
+    type: Number,
     index: true,
   },
 });
