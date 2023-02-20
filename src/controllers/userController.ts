@@ -17,7 +17,6 @@ class UserController {
       _id,
       req.body.game
     );
-    console.log(updatedGames);
     res.status(200).json(updatedGames);
   };
 }
