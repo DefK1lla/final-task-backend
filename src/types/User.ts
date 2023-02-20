@@ -6,5 +6,5 @@ export interface IUser {
   password?: string;
   _id: ObjectId;
   googleId?: string;
-  playedGames?: Set<Games>;
+  playedGames?: Games[];
 }

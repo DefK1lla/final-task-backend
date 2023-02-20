@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   playedGames: {
     required: true,
-    type: Set,
+    type: [{ type: String }],
     index: true,
   },
 });
