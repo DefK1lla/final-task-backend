@@ -46,7 +46,7 @@ class AuthController {
       return res.status(200).json({
         _id: newUser._id,
         username: newUser.username,
-        playedGames: newUser.playedGames,
+        playedGames: [],
       });
     });
   };
