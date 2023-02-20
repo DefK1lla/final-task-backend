@@ -42,9 +42,11 @@ class AuthController {
       username,
       password: hashedPassword,
     });
-    res
-      .status(200)
-      .json({ _id: newUser._id, username: newUser.username });
+    res.status(200).json({
+      _id: newUser._id,
+      username: newUser.username,
+      playedGames: [],
+    });
   };
 
   localLogin = async (
