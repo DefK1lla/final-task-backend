@@ -60,9 +60,11 @@ class AuthController {
           .json({ message: 'Incorrect username or password' });
       }
       req.logIn(user, err => {
-        return res
-          .status(200)
-          .json({ _id: user._id, username: user.username });
+        return res.status(200).json({
+          _id: user._id,
+          username: user.username,
+          playedGames: user.playedGames,
+        });
       });
     })(req, res, next);
   };
