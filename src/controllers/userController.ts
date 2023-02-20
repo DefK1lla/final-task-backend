@@ -11,12 +11,13 @@ class UserController {
     res.status(200).json(games);
   };
 
-  updatePlayedGames = (req: Request, res: Response) => {
+  updatePlayedGames = async (req: Request, res: Response) => {
     const { _id } = req.user as IUser;
-    const updatedGames = userService.updatePlayedGames(
+    const updatedGames = await userService.updatePlayedGames(
       _id,
       req.body.game
     );
+    console.log(updatedGames);
     res.status(200).json(updatedGames);
   };
 }

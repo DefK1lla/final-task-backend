@@ -48,9 +48,11 @@ class UserService {
     game: Games
   ): Promise<Games[]> => {
     const user = await User.findById(id);
-    user?.playedGames.push(game);
-    await user?.save();
-    return user?.playedGames ?? [];
+    if (!user?.playedGames.includes(game)) {
+      user?.playedGames.push(game);
+      await user?.save();
+    }
+    return user?.playedGames || [];
   };
 }
 
