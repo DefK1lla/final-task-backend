@@ -5,9 +5,9 @@ import type { IUser } from '../types/User';
 import userService from '../services/userService';
 
 class UserController {
-  getPlayedGames = (req: Request, res: Response) => {
+  getPlayedGames = async (req: Request, res: Response) => {
     const { _id } = req.user as IUser;
-    const games = userService.getPlayedGames(_id);
+    const games = await userService.getPlayedGames(_id);
     res.status(200).json(games);
   };
 
