@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema<IUser>({
     unique: true,
     index: true,
   },
+  playedGames: {
+    required: true,
+    type: [{ type: String }],
+    default: [],
+    index: true,
+  },
 });
 
 export default mongoose.model<IUser>('User', userSchema);

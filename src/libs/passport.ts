@@ -26,7 +26,11 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser(async (id: string, cb) => {
   try {
     const user = await userService.getOneById(id);
-    cb(null, { username: user?.username, _id: user?._id });
+    cb(null, {
+      username: user?.username,
+      _id: user?._id,
+      playedGames: user?.playedGames,
+    });
   } catch (e) {
     console.error(e);
     cb(e as Error, null);
