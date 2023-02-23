@@ -1,8 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import morgan from 'morgan';
 
 import {
   PORT,
@@ -16,6 +17,12 @@ import router from './routes';
 import errorHandler from './utils/errorHandler';
 
 const app = express();
+
+app.use(
+  morgan(
+    ':method :url :status :res[content-length] - :response-time ms'
+  )
+);
 
 app.use(
   cors({
