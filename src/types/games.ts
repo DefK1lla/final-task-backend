@@ -1,1 +1,5 @@
-export type Games = 'speed-match' | 'memory-match' | 'memory-matrix';
+export type Games =
+  | 'speed-match'
+  | 'memory-match'
+  | 'memory-matrix'
+  | 'resolution-matrix';

@@ -4,14 +4,15 @@ import type {
   getByUserIdParams,
   createUserBody,
 } from '../types/http';
-import type { IUser } from '../types/User';
+import type { IUser } from '../types/user';
 
 import scoreService from '../services/scoreService';
+import { Games } from 'src/types/games';
 
 class ScoreController {
   create = async (req: Request, res: Response) => {
     const user = req.user as IUser;
-    const game = req.params.game;
+    const game = req.params.game as Games;
     const body: createUserBody = req?.body;
     const newScore = await scoreService.create({
       ...body.score,

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongoose';
 import { Games } from 'src/types/games';
-import type { IUser } from 'src/types/User';
+import type { IUser } from 'src/types/user';
 
 import User from '../models/User';
 

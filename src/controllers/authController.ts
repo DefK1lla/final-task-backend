@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import bcrypt from 'bcryptjs';
 
-import type { IUser } from '../types/User';
+import type { IUser } from '../types/user';
 
 import { CLIENT_URL, PASSWORD_SALT } from '../utils/config';
 
