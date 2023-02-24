@@ -1,6 +1,6 @@
 import { Request, Response } from 'express-serve-static-core';
 
-import type { IUser } from '../types/User';
+import type { IUser } from '../types/user';
 
 import userService from '../services/userService';
 

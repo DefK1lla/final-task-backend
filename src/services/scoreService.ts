@@ -1,5 +1,5 @@
 import type { ObjectId } from 'mongoose';
-import type { IScore } from 'src/types/Score';
+import type { IScore } from 'src/types/score';
 
 import Score from '../models/Score';
 

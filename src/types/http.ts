@@ -1,4 +1,4 @@
-import type { IScore } from './Score';
+import type { IScore } from './score';
 
 export interface getByUserIdParams {
   userId: string;

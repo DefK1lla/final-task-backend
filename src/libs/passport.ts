@@ -5,7 +5,7 @@ import passportLocal from 'passport-local';
 import passportGoogle from 'passport-google-oauth20';
 import bcrypt from 'bcryptjs';
 
-import type { IUser } from 'src/types/User';
+import type { IUser } from 'src/types/user';
 
 import {
   GOOGLE_CLIENT_ID,
