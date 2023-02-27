@@ -5,7 +5,7 @@ export interface IScore {
   _id: ObjectId;
   user: ObjectId | string;
   game: Games;
-  score: string;
+  score: number;
   date: Date;
   correct?: string;
   accuracy?: string;
