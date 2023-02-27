@@ -1,6 +1,6 @@
 import mongoose from '../libs/mongoose';
 
-import type { IUser } from '../types/User';
+import type { IUser } from '../types/user';
 
 const userSchema = new mongoose.Schema<IUser>({
   username: {
@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema<IUser>({
     required: false,
     type: String,
     unique: true,
+    index: true,
+  },
+  playedGames: {
+    required: true,
+    type: [{ type: String }],
+    default: [],
     index: true,
   },
 });

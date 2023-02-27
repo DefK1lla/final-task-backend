@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import bcrypt from 'bcryptjs';
 
-import type { IUser } from '../types/User';
+import type { IUser } from '../types/user';
 
 import { CLIENT_URL, PASSWORD_SALT } from '../utils/config';
 
@@ -42,9 +42,13 @@ class AuthController {
       username,
       password: hashedPassword,
     });
-    res
-      .status(200)
-      .json({ _id: newUser._id, username: newUser.username });
+    req.logIn(newUser, err => {
+      return res.status(200).json({
+        _id: newUser._id,
+        username: newUser.username,
+        playedGames: [],
+      });
+    });
   };
 
   localLogin = async (
@@ -60,9 +64,11 @@ class AuthController {
           .json({ message: 'Incorrect username or password' });
       }
       req.logIn(user, err => {
-        return res
-          .status(200)
-          .json({ _id: user._id, username: user.username });
+        return res.status(200).json({
+          _id: user._id,
+          username: user.username,
+          playedGames: user.playedGames,
+        });
       });
     })(req, res, next);
   };

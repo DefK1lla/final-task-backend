@@ -5,7 +5,7 @@ import passportLocal from 'passport-local';
 import passportGoogle from 'passport-google-oauth20';
 import bcrypt from 'bcryptjs';
 
-import type { IUser } from 'src/types/User';
+import type { IUser } from 'src/types/user';
 
 import {
   GOOGLE_CLIENT_ID,
@@ -26,7 +26,11 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser(async (id: string, cb) => {
   try {
     const user = await userService.getOneById(id);
-    cb(null, { username: user?.username, _id: user?._id });
+    cb(null, {
+      username: user?.username,
+      _id: user?._id,
+      playedGames: user?.playedGames,
+    });
   } catch (e) {
     console.error(e);
     cb(e as Error, null);
