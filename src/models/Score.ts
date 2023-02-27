@@ -17,7 +17,7 @@ const scoreSchema = new mongoose.Schema<IScore>(
     },
     score: {
       required: true,
-      type: String,
+      type: Number,
       index: true,
     },
     correct: {
