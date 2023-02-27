@@ -1,10 +1,9 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import morgan from 'morgan';
-
 import {
   PORT,
   MONGODB_URI,
@@ -15,14 +14,11 @@ import {
 import passport from './libs/passport';
 import router from './routes';
 import errorHandler from './utils/errorHandler';
+import logger from './libs/winston';
 
 const app = express();
 
-app.use(
-  morgan(
-    ':method :url :status :res[content-length] - :response-time ms'
-  )
-);
+app.use(logger.requestLogger);
 
 app.use(
   cors({

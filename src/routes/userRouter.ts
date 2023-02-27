@@ -2,6 +2,7 @@ import { Router } from 'express';
 import userController from '../controllers/userController';
 
 import checkAuth from '../middlewares/checkAuth';
+import 'express-async-errors';
 
 const router = Router();
 

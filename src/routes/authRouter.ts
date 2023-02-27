@@ -4,6 +4,7 @@ import passport from '../libs/passport';
 
 import authController from '../controllers/authController';
 import checkAuth from '../middlewares/checkAuth';
+import 'express-async-errors';
 
 const router = Router();
 
